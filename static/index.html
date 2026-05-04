@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Startup Idea Validator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="header-title">
+                <div class="logo-container">
+                    <i class="ph-fill ph-rocket-launch"></i>
+                </div>
+                <div class="title-text">
+                    <h1>Idea Validator</h1>
+                    <span class="subtitle">Domain-Specific AI Decision Support System</span>
+                </div>
+            </div>
+        </header>
+        
+        <main class="chat-container" id="chatContainer">
+            <div class="message ai-message welcome-message">
+                <div class="message-avatar">
+                    <i class="ph-fill ph-robot"></i>
+                </div>
+                <div class="message-content">
+                    <p>Hello! I am your AI Startup Analyst. Describe your startup idea, and I will provide a structured evaluation covering market demand, competition, monetization, and scalability.</p>
+                </div>
+            </div>
+        </main>
+
+        <footer class="input-area">
+            <div class="sample-actions">
+                <button type="button" class="sample-btn" id="sampleBtn">
+                    <i class="ph-bold ph-magic-wand"></i> Try Sample Idea
+                </button>
+            </div>
+            <form id="chatForm" class="input-container">
+                <textarea id="ideaInput" placeholder="Describe your startup idea in detail..." rows="1"></textarea>
+                <button type="submit" id="sendBtn" title="Analyze Idea">
+                    <i class="ph-bold ph-arrow-up"></i>
+                </button>
+            </form>
+            <div class="footer-disclaimer">
+                AI can make mistakes. Consider verifying important insights.
+            </div>
+        </footer>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
