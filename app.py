@@ -52,9 +52,32 @@ def analyze():
     model = genai.GenerativeModel(SELECTED_MODEL)
     print("Using model:", model)
 
-    system_prompt = """You are a professional startup analyst.
+    # Step 1: Intent Classification
+    intent_prompt = f"""
+Determine if the following input is a startup/business idea.
+
+Input: "{idea}"
+
+Respond ONLY with:
+YES or NO
+"""
+    try:
+        intent_response = model.generate_content(intent_prompt)
+        intent = intent_response.text.strip().upper()
+        intent = re.sub(r'[^A-Z]', '', intent)
+        print("Intent detected:", intent)
+    except Exception as e:
+        return jsonify({"error": f"Intent verification failed: {str(e)}"}), 500
+
+    # Step 2: Validation Logic
+    if intent != "YES":
+        return jsonify({"error": "Please enter your startup idea. This chatbot only evaluates business ideas."}), 400
+
+    system_prompt = """You are a startup idea evaluation system.
 
 STRICT RULES:
+* Only analyze startup ideas.
+* If input is not a startup idea, respond with: 'Please enter your startup idea.'
 * Only respond in strictly valid JSON format.
 * No extra explanation, markdown wrapping, or paragraphs.
 * Be concise and analytical.
