@@ -52,53 +52,38 @@ def analyze():
     model = genai.GenerativeModel(SELECTED_MODEL)
     print("Using model:", model)
 
-    # Step 1: Intent Classification
-    intent_prompt = f"""
-Determine if the following input is a startup/business idea.
+    prompt_text = f"""
+You are a startup idea evaluation system.
 
-Input: "{idea}"
+Task:
 
-Respond ONLY with:
-YES or NO
+1. First determine if the input is a valid startup/business idea.
+
+2. If NOT a startup idea, respond EXACTLY with:
+   "INVALID"
+
+3. If it IS a startup idea, respond ONLY in JSON format:
+
+{{
+"market_demand": "...",
+"competition": "...",
+"monetization": "...",
+"scalability": "...",
+"score": "...",
+"suggestion": "..."
+}}
+
+Input:
+{idea}
 """
-    try:
-        intent_response = model.generate_content(intent_prompt)
-        intent = intent_response.text.strip().upper()
-        intent = re.sub(r'[^A-Z]', '', intent)
-        print("Intent detected:", intent)
-    except Exception as e:
-        return jsonify({"error": f"Intent verification failed: {str(e)}"}), 500
-
-    # Step 2: Validation Logic
-    if intent != "YES":
-        return jsonify({"error": "Please enter your startup idea. This chatbot only evaluates business ideas."}), 400
-
-    system_prompt = """You are a startup idea evaluation system.
-
-STRICT RULES:
-* Only analyze startup ideas.
-* If input is not a startup idea, respond with: 'Please enter your startup idea.'
-* Only respond in strictly valid JSON format.
-* No extra explanation, markdown wrapping, or paragraphs.
-* Be concise and analytical.
-* Output must be easy to read.
-
-Output format MUST match this exact schema:
-{
-  "market_demand": "(Low/Medium/High + 1 line reason)",
-  "competition": "(Low/Medium/High)",
-  "monetization": "(How it earns money)",
-  "scalability": "(Low/Medium/High)",
-  "score": "(A number out of 10, e.g. 8)",
-  "suggestion": "(One powerful improvement)"
-}"""
-
-    prompt_text = f"{system_prompt}\n\nAnalyze this startup idea:\n{idea}"
 
     try:
         response = model.generate_content(prompt_text)
         content = response.text.strip()
         
+        if content == "INVALID":
+            return jsonify({"error": "Please enter your startup idea. This chatbot only evaluates business ideas."}), 400
+            
         # Clean up potential markdown formatting from LLM response
         if content.startswith("```json"):
             content = content[7:]
@@ -138,15 +123,13 @@ Output format MUST match this exact schema:
             ai_json["confidence"] = "N/A"
 
         return jsonify(ai_json)
-    except Exception as e:
-        error_msg = f"API Request failed: {str(e)}"
-        return jsonify({"error": error_msg}), 500
     except json.JSONDecodeError as e:
         print(f"JSON Parse Error: {str(e)}")
         print(f"Raw AI response: {content}")
         return jsonify({"error": "AI response formatting failed. Please try again."}), 500
     except Exception as e:
-        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+        error_msg = f"API Request failed: {str(e)}"
+        return jsonify({"error": error_msg}), 500
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
