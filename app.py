@@ -57,12 +57,14 @@ You are a startup idea evaluation system.
 
 Task:
 
-1. First determine if the input is a valid startup/business idea.
+1. First determine if the input is attempting to describe a business/startup idea.
+   - ACCEPT ANY input that represents a business, startup, product, service, platform, marketplace, or commercial concept — even if unrealistic, impractical, or humorous.
+   - ONLY REJECT casual conversation, greetings, random questions, or non-business statements (e.g., "hi", "how are you", "tell me a joke").
 
-2. If NOT a startup idea, respond EXACTLY with:
+2. If the input is NOT attempting to describe a business/startup idea, respond EXACTLY with:
    "INVALID"
 
-3. If it IS a startup idea, respond ONLY in JSON format:
+3. If it IS attempting to describe a business/startup idea, evaluate it and respond ONLY in JSON format:
 
 {{
 "market_demand": "...",
@@ -105,6 +107,10 @@ Input:
                 # Ensure it's correctly mapped if the LLM hallucinated out of 100
                 if score_num > 10:
                     score_num = score_num / 10
+                
+                # Format to a 10-point scale string, e.g., 8.2 or 8
+                score_num = round(score_num, 1)
+                ai_json["score"] = str(score_num) if score_num % 1 != 0 else str(int(score_num))
                     
                 if score_num >= 8:
                     ai_json["score_tag"] = "High Potential"

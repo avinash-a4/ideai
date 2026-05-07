@@ -169,7 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${data.confidence ? `<div class="confidence-tag"><i class="ph-bold ph-target"></i> ${data.confidence} Confidence</div>` : ''}
                     </div>
                 </div>
-                <div class="score-value">${escapeHTML(String(scoreDisplay))}</div>
+                <div class="score-value">${escapeHTML(String(scoreDisplay))} <span style="font-size: 0.5em; opacity: 0.8; font-weight: 500;">/ 10</span></div>
             </div>
         `;
 
